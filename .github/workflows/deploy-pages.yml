@@ -1,6 +1,6 @@
 # Build and deploy NC Jobs Hub to GitHub Pages (PWA)
-# Required: Repo → Settings → Pages → Build and deployment → Source: "GitHub Actions"
-# If deploy fails: Settings → Actions → General → Workflow permissions → "Read and write permissions"
+# Required: Settings → Pages → Source: "GitHub Actions"
+# Required: Settings → Actions → General → Workflow permissions: "Read and write permissions"
 name: Deploy to GitHub Pages
 
 on:
@@ -12,6 +12,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
 
 concurrency:
   group: pages
@@ -20,6 +21,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      APP_DIR: "Agent Rules & Guidelines"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,25 +30,28 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: 'Agent Rules & Guidelines/package-lock.json'
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "Agent Rules & Guidelines/package-lock.json"
 
       - name: Install dependencies
         run: npm ci
-        working-directory: 'Agent Rules & Guidelines'
+        working-directory: "Agent Rules & Guidelines"
 
       - name: Build PWA
         run: npm run build
-        working-directory: 'Agent Rules & Guidelines'
+        working-directory: "Agent Rules & Guidelines"
         env:
-          BASE: '/${{ github.event.repository.name }}/'
+          BASE: "/${{ github.event.repository.name }}/"
 
-      - name: Prepare artifact (avoid path-with-space issues)
-        run: cp -r "Agent Rules & Guidelines/dist" ./deploy
+      - name: Prepare artifact
+        run: |
+          cp -r "$APP_DIR/dist" ./deploy
+          ls -la deploy/
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@3
+      # Must use @v3.0.0 or @v4 (with "v") — @3 without "v" fails to resolve
+      - name: Upload artifact for Pages
+        uses: actions/upload-pages-artifact@v3.0.0
         with:
           path: deploy
 
@@ -55,7 +61,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@4
+        uses: actions/deploy-pages@v4.0.5
