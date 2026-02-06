@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Env files – never commit API keys
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build
+dist/
+build/
+
+# Logs and misc
+*.log
+.DS_Store

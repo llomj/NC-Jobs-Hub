@@ -1,0 +1,15 @@
+{
+  "name": "nc-jobs-hub-api",
+  "description": "Backend API for NC Jobs Hub and OpenClaw polling",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "openclaw": "node openclaw-poller.js",
+    "scrape:demo": "node demo-scraper.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0"
+  }
+}
