@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { JobListing, Language, JobStatus } from '../types';
-import { UI_LABELS, SOCIAL_FEED_FACEBOOK_GROUP_URL } from '../constants';
+import { UI_LABELS, SOCIAL_FEED_FACEBOOK_GROUP_URL, SOCIAL_FEED_FACEBOOK_APP_URL } from '../constants';
 
 interface JobFeedProps {
   jobs: JobListing[];
@@ -46,6 +46,21 @@ const JobFeed: React.FC<JobFeedProps> = ({ jobs, onSelectJob, onStatusChange, se
     if (confirmDeleteId && onStatusChange) {
       onStatusChange(confirmDeleteId, JobStatus.NEW, 'Unsaved by user');
       setConfirmDeleteId(null);
+    }
+  };
+
+  const handleOpenFacebook = () => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.location.href = SOCIAL_FEED_FACEBOOK_APP_URL;
+      const cancel = () => { clearTimeout(fallback); document.removeEventListener('visibilitychange', cancel); };
+      const fallback = setTimeout(() => {
+        document.removeEventListener('visibilitychange', cancel);
+        if (!document.hidden) window.open(SOCIAL_FEED_FACEBOOK_GROUP_URL, '_blank');
+      }, 1800);
+      document.addEventListener('visibilitychange', cancel);
+    } else {
+      window.open(SOCIAL_FEED_FACEBOOK_GROUP_URL, '_blank');
     }
   };
 
@@ -112,24 +127,22 @@ const JobFeed: React.FC<JobFeedProps> = ({ jobs, onSelectJob, onStatusChange, se
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <a
-                href={SOCIAL_FEED_FACEBOOK_GROUP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={handleOpenFacebook}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest transition-all"
               >
                 <i className="fa-solid fa-bullhorn"></i>
                 {t.socialFeedOpenFacebook}
-              </a>
-              <a
-                href={SOCIAL_FEED_FACEBOOK_GROUP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+              </button>
+              <button
+                type="button"
+                onClick={handleOpenFacebook}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-blue-500/50 text-blue-400 hover:bg-blue-500/10 text-[10px] font-black uppercase tracking-widest transition-all"
               >
                 <i className="fa-solid fa-user-plus"></i>
                 {t.socialFeedJoinGroup}
-              </a>
+              </button>
             </div>
           </div>
         )}
@@ -191,6 +204,18 @@ const JobFeed: React.FC<JobFeedProps> = ({ jobs, onSelectJob, onStatusChange, se
                   <div className="flex items-center space-x-2">
                     {isSocial ? (
                       <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded-lg">Social Listing</span>
+                    ) : job.url ? (
+                      <a
+                        href={job.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-[9px] font-black text-yellow-400/60 uppercase tracking-widest bg-yellow-400/10 px-2 py-0.5 rounded-lg hover:bg-yellow-400/20 hover:text-yellow-400 transition-colors cursor-pointer inline-flex items-center gap-1"
+                        title="Open announcement on source website"
+                      >
+                        {job.sourceId}
+                        <i className="fa-solid fa-external-link text-[8px] opacity-70" aria-hidden />
+                      </a>
                     ) : (
                       <span className="text-[9px] font-black text-yellow-400/60 uppercase tracking-widest bg-yellow-400/10 px-2 py-0.5 rounded-lg">{job.sourceId}</span>
                     )}

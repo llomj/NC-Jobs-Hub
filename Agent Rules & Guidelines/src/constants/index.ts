@@ -60,8 +60,14 @@ export const COMMUNES = [
   'Ouvéa'
 ];
 
+/** Primary Facebook group ID for Social Feed. */
+export const SOCIAL_FEED_FACEBOOK_GROUP_ID = '258684861704541';
+
 /** Primary Facebook group URL for Social Feed: view job announcements and join group. */
-export const SOCIAL_FEED_FACEBOOK_GROUP_URL = 'https://www.facebook.com/groups/258684861704541';
+export const SOCIAL_FEED_FACEBOOK_GROUP_URL = `https://www.facebook.com/groups/${SOCIAL_FEED_FACEBOOK_GROUP_ID}`;
+
+/** fb:// URL scheme to open group in Facebook app (falls back to web if app not installed). */
+export const SOCIAL_FEED_FACEBOOK_APP_URL = `fb://group/${SOCIAL_FEED_FACEBOOK_GROUP_ID}/`;
 
 export const SOURCES: JobSource[] = [
   { id: 'emploi-nc', name: 'Emploi.gouv.nc', url: 'https://emploi.gouv.nc', enabled: true },
