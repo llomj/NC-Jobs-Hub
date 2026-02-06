@@ -1,5 +1,6 @@
 # Build and deploy NC Jobs Hub to GitHub Pages (PWA)
-# After first push: Repo → Settings → Pages → Source: "GitHub Actions"
+# Required: Repo → Settings → Pages → Build and deployment → Source: "GitHub Actions"
+# If deploy fails: Settings → Actions → General → Workflow permissions → "Read and write permissions"
 name: Deploy to GitHub Pages
 
 on:
@@ -26,7 +27,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
           cache: 'npm'
           cache-dependency-path: 'Agent Rules & Guidelines/package-lock.json'
 
@@ -40,10 +41,13 @@ jobs:
         env:
           BASE: '/${{ github.event.repository.name }}/'
 
+      - name: Prepare artifact (avoid path-with-space issues)
+        run: cp -r "Agent Rules & Guidelines/dist" ./deploy
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@3
         with:
-          path: 'Agent Rules & Guidelines/dist'
+          path: deploy
 
   deploy:
     needs: build
