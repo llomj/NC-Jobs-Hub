@@ -136,7 +136,21 @@ const JobDetail: React.FC<JobDetailProps> = ({ job, identity, onClose, onStatusC
 
             <header>
               <div className="flex items-center space-x-2 mb-3">
-                <span className="text-[9px] text-yellow-400/60 font-black uppercase tracking-[0.3em] border-l-2 border-yellow-400 pl-2">{job.sourceId}</span>
+                {job.url ? (
+                  <a
+                    href={job.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-[9px] text-yellow-400/60 font-black uppercase tracking-[0.3em] border-l-2 border-yellow-400 pl-2 hover:text-yellow-400 transition-colors cursor-pointer"
+                    title="Open announcement on source website"
+                  >
+                    {job.sourceId}
+                    <i className="fa-solid fa-external-link ml-1.5 opacity-70 text-[8px]" aria-hidden />
+                  </a>
+                ) : (
+                  <span className="text-[9px] text-yellow-400/60 font-black uppercase tracking-[0.3em] border-l-2 border-yellow-400 pl-2">{job.sourceId}</span>
+                )}
               </div>
               <h2 className="text-3xl font-black mb-2 leading-tight tracking-tighter">{job.title}</h2>
               <div className="flex items-center flex-wrap gap-x-3 gap-y-2 text-yellow-400 font-bold text-sm">
@@ -175,6 +189,23 @@ const JobDetail: React.FC<JobDetailProps> = ({ job, identity, onClose, onStatusC
                   </div>
                 </div>
               )}
+
+              {/* EMPLOYER EMAIL (ENTERPRISE OR PERSONAL) - always shown */}
+              <div className="flex items-center space-x-4 w-full bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-xl shadow-lg ring-1 ring-white/5">
+                <div className="w-12 h-12 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center justify-center text-green-500">
+                  <i className="fa-solid fa-envelope text-xl"></i>
+                </div>
+                <div className="text-left flex-1">
+                  <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-0.5">Employer Email</p>
+                  {job.contactEmail ? (
+                    <a href={`mailto:${job.contactEmail}`} className="text-sm text-white font-black hover:text-green-400 transition-colors break-all">
+                      {job.contactEmail}
+                    </a>
+                  ) : (
+                    <p className="text-sm text-gray-500 font-medium">No email provided — apply via official portal below</p>
+                  )}
+                </div>
+              </div>
 
               {/* DATE OF ANNOUNCEMENT SECTION */}
               <div className="flex items-center space-x-4 w-full bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-xl shadow-lg ring-1 ring-white/5">
